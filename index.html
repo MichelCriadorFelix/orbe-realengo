@@ -7,6 +7,22 @@
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      window.addEventListener('error', function(e) {
+        var pre = document.createElement('pre');
+        pre.style.color = 'red';
+        pre.style.padding = '20px';
+        pre.textContent = 'Global Error: ' + (e.error ? e.error.stack : e.message);
+        document.body.appendChild(pre);
+      });
+      window.addEventListener('unhandledrejection', function(e) {
+        var pre = document.createElement('pre');
+        pre.style.color = 'red';
+        pre.style.padding = '20px';
+        pre.textContent = 'Unhandled Promise: ' + (e.reason ? e.reason.stack : e.reason);
+        document.body.appendChild(pre);
+      });
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
