@@ -39,9 +39,13 @@ export default function LoginPage() {
         });
         navigate(newRole === 'admin' ? '/admin' : '/client');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Erro no login:", error);
-      toast.error("Erro ao autenticar. Tente novamente.");
+      if (error.code === 'auth/popup-closed-by-user') {
+        toast.info("Login cancelado. Você fechou a janela de autenticação.");
+      } else {
+        toast.error("Erro ao autenticar. Tente novamente.");
+      }
     } finally {
       setLoading(false);
     }
