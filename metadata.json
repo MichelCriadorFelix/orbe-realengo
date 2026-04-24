@@ -1,0 +1,8 @@
+{
+  "name": "Orbe",
+  "description": "Cloned Project: Orbe (with Firestore Auth integration)",
+  "requestFramePermissions": [
+    "geolocation"
+  ],
+  "majorCapabilities": []
+}
