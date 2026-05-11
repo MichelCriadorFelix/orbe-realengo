@@ -14,11 +14,23 @@ const fileToBase64 = (file: File): Promise<string> => {
   });
 };
 
+const poolLines = [
+  'Todas',
+  'Linha Aquários',
+  'Linha Corona',
+  'Linha Hidra',
+  'Linha Aquila',
+  'Linha Select',
+  'Linha Orion',
+  'Linha Fênix'
+];
+
 export default function AdminProducts() {
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [selectedLine, setSelectedLine] = useState<string>('Todas');
   
   // Form State
   const [title, setTitle] = useState('');
@@ -145,14 +157,30 @@ export default function AdminProducts() {
     setImageFile(null);
   };
 
+  const filteredProducts = products.filter(p => {
+    if (selectedLine === 'Todas') return true;
+    return p.title.toLowerCase().includes(selectedLine.toLowerCase());
+  });
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <h2 className="text-xl font-semibold text-gray-800">Catálogo de Produtos e Serviços</h2>
         {!isAdding && (
-          <button onClick={() => setIsAdding(true)} className="bg-blue-600 text-white px-4 py-2.5 rounded-xl text-sm font-semibold hover:bg-blue-700 flex items-center justify-center gap-2 shadow-sm w-full sm:w-auto min-h-[44px]">
-            <Plus size={16} /> Novo Produto
-          </button>
+          <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+            <select
+              value={selectedLine}
+              onChange={(e) => setSelectedLine(e.target.value)}
+              className="bg-white border border-gray-200 text-gray-700 px-4 py-2.5 rounded-xl text-sm font-medium focus:ring-2 focus:ring-blue-500 outline-none w-full sm:w-auto shadow-sm"
+            >
+              {poolLines.map(line => (
+                <option key={line} value={line}>{line}</option>
+              ))}
+            </select>
+            <button onClick={() => setIsAdding(true)} className="bg-blue-600 text-white px-4 py-2.5 rounded-xl text-sm font-semibold hover:bg-blue-700 flex items-center justify-center gap-2 shadow-sm w-full sm:w-auto min-h-[44px] whitespace-nowrap">
+              <Plus size={16} /> Novo Produto
+            </button>
+          </div>
         )}
       </div>
 
@@ -227,7 +255,7 @@ export default function AdminProducts() {
         <div className="text-center py-10"><Loader2 className="w-8 h-8 animate-spin mx-auto text-blue-600" /></div>
       ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {products.map(product => (
+          {filteredProducts.map(product => (
             <div key={product.id} className="glass-card rounded-3xl overflow-hidden hover:shadow-lg transition-all relative">
               <img src={product.image || 'https://images.unsplash.com/photo-1576013551627-11dc5fdb6ad5?auto=format&fit=crop&q=80&w=800'} alt={product.title} className="w-full h-40 object-cover" />
               <div className="absolute top-3 right-3 flex gap-2">
@@ -256,7 +284,7 @@ export default function AdminProducts() {
               </div>
             </div>
           ))}
-          {products.length === 0 && !isAdding && (
+          {filteredProducts.length === 0 && !isAdding && (
             <div className="col-span-full text-center py-12 glass-card rounded-3xl border-dashed border-2 border-white/50">
               <p className="text-gray-500">Nenhum produto cadastrado no catálogo.</p>
             </div>
